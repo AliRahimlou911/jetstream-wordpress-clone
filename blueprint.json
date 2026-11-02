@@ -1,0 +1,10 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": { "title": "Jetstream Vacations on WordPress", "author": "AliRahimlou911" },
+  "landingPage": "/",
+  "preferredVersions": { "php": "8.3", "wp": "latest" },
+  "features": { "networking": true },
+  "steps": [
+    { "step": "installTheme", "themeData": { "resource": "url", "url": "https://raw.githubusercontent.com/AliRahimlou911/jetstream-wordpress-clone/main/jetstream-theme.zip" }, "options": { "activate": true } }
+  ]
+}
