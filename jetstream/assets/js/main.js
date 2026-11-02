@@ -43,6 +43,11 @@
 	var booking = document.querySelector('[data-booking]');
 	if (booking) {
 		var f = booking.elements;
+		// Preselect from ?destination= (static copies have no PHP to do it).
+		var wanted = new URLSearchParams(location.search).get('destination');
+		if (wanted && f.destination.querySelector('option[value="' + wanted.replace(/[^a-z0-9-]/gi, '') + '"]')) {
+			f.destination.value = wanted;
+		}
 		var sum = function (key, value) { booking.querySelector('[data-sum="' + key + '"]').textContent = value || '—'; };
 		var month = function (v) {
 			if (!v) return '';
@@ -82,8 +87,14 @@
 			e.preventDefault();
 			show('');
 			busy(true);
-			fetch(window.jetstream.ajax, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
-				.then(function (r) { return r.json(); })
+			// Static (Netlify) copies post to Netlify Forms instead of WordPress.
+			var netlify = !!form.querySelector('input[name="form-name"]');
+			var req = netlify
+				? fetch('/', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(new FormData(form)).toString() })
+					.then(function (r) { return { success: r.ok }; })
+				: fetch(window.jetstream.ajax, { method: 'POST', body: new FormData(form), credentials: 'same-origin' })
+					.then(function (r) { return r.json(); });
+			req
 				.then(function (res) {
 					if (!res || !res.success) throw new Error('failed');
 					show('success');
